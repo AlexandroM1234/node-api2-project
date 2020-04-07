@@ -128,4 +128,30 @@ router.delete("/:id", (req, res) => {
       console.log("messed up the delete", err);
     });
 });
+
+router.put("/:id", (req, res) => {
+  const postId = req.params.id;
+  const postChanges = req.body;
+  const { title, contents } = req.body;
+  Posts.update(postId, postChanges)
+    .then((post) => {
+      if (post) {
+        res.status(200).json(postChanges);
+      } else if (!title || !contents) {
+        res.status(400).json({
+          errorMessage: "Please provide title and contents for the post.",
+        });
+      } else {
+        res
+          .status(404)
+          .json({ message: "The post with the specified ID does not exist." });
+      }
+    })
+    .catch((err) => {
+      console.log("messed up the update", err);
+      res
+        .status(500)
+        .json({ error: "The post information could not be modified." });
+    });
+});
 module.exports = router;
