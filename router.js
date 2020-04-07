@@ -116,15 +116,16 @@ router.delete("/:id", (req, res) => {
     .then((success) => {
       if (success) {
         res.status(200).json({ message: "post deleted" });
-      } else {
+      } else if (!success) {
         res
           .status(404)
           .json({ message: "The post with the specified ID does not exist." });
+      } else {
+        res.status(500).json({ error: "The post could not be removed" });
       }
     })
     .catch((err) => {
       console.log("messed up the delete", err);
-      res.status(500).json({ error: "The post could not be removed" });
     });
 });
 module.exports = router;
