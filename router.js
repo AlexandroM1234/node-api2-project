@@ -40,7 +40,6 @@ router.get("/:id", (req, res) => {
 });
 
 // router gets id for comments
-
 router.get("/:id/comments", (req, res) => {
   Posts.findPostComments(req.params.id)
     .then((comments) => {
@@ -58,6 +57,32 @@ router.get("/:id/comments", (req, res) => {
     })
     .catch((err) => {
       console.log("messed up comments get", err);
+    });
+});
+
+//router makes a new post
+
+router.post("/", (req, res) => {
+  const newPost = req.body;
+  const { title, contents } = req.body;
+  Posts.insert(newPost)
+    .then((post) => {
+      if (!title || !contents) {
+        res.status(400).json({
+          errorMessage: "Please provide title and contents for the post.",
+        });
+      } else if (post) {
+        res.status(201).json(post);
+      } else {
+        res
+          .status(500)
+          .json({
+            error: "There was an error while saving the post to the database",
+          });
+      }
+    })
+    .catch((err) => {
+      console.log("messed up adding a new post", err);
     });
 });
 
