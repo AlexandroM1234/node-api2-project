@@ -1,6 +1,6 @@
 const express = require("express");
 
-const Posts = require("./data/db");
+let Posts = require("./data/db");
 
 const router = express.Router();
 
@@ -100,16 +100,31 @@ router.post("/:id/comments", (req, res) => {
       } else if (comment) {
         res.status(201).json(comment);
       } else {
-        res
-          .status(500)
-          .json({
-            error:
-              "There was an error while saving the comment to the database",
-          });
+        res.status(500).json({
+          error: "There was an error while saving the comment to the database",
+        });
       }
     })
     .catch((err) => {
       console.log("you messed up adding a new comment");
+    });
+});
+// router delets a post via ID
+router.delete("/:id", (req, res) => {
+  const postId = req.params.id;
+  Posts.remove(postId)
+    .then((success) => {
+      if (success) {
+        res.status(200).json({ message: "post deleted" });
+      } else {
+        res
+          .status(404)
+          .json({ message: "The post with the specified ID does not exist." });
+      }
+    })
+    .catch((err) => {
+      console.log("messed up the delete", err);
+      res.status(500).json({ error: "The post could not be removed" });
     });
 });
 module.exports = router;
