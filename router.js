@@ -22,12 +22,12 @@ router.get("/", (req, res) => {
 router.get("/:id", (req, res) => {
   Posts.findById(req.params.id)
     .then((post) => {
-      if (post) {
-        res.status(200).json(post);
-      } else if (!post) {
+      if (post.length === 0) {
         res
           .status(404)
           .json({ message: "The post with the specified ID does not exist." });
+      } else if (post.length > 0) {
+        res.status(200).json(post);
       } else {
         res
           .status(500)
@@ -43,9 +43,9 @@ router.get("/:id", (req, res) => {
 router.get("/:id/comments", (req, res) => {
   Posts.findPostComments(req.params.id)
     .then((comments) => {
-      if (comments) {
+      if (comments.length > 0) {
         res.status(200).json(comments);
-      } else if (!comments) {
+      } else if (comments === 0) {
         res
           .status(404)
           .json({ message: "The post with the specified ID does not exist." });
